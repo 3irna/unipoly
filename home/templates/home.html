@@ -1,0 +1,833 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+    <div id="loading_page">
+        <img class="plinko-loading-image" src="{% static 'images/3.jpg' %}" alt="">
+        <div class="text-center plinko-loading-spinner">
+            <div class="uni-spinner" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="home" hidden>
+        <div class="container">
+            <div class="d-flex justify-content-center mt-4 mb-2">
+                <button type="button" class="btn btn-success btn-sm plinko-btn mx-1" value="0">level
+                    <span class="user_level">01</span>
+                </button>
+                <span class="text-secondary mx-1"> | </span>
+                <button type="button" class="btn btn-warning btn-sm plinko-btn mx-1"
+                        onclick="show_page('players',this.id)">
+                    Players {{ is }}
+                    <img src="{% static 'images/tas1.png' %}" class="plinko-icon-size-home">
+                </button>
+                <button type="button" class="btn btn-warning btn-sm plinko-btn mx-1"
+                        onclick="show_page('guide',this.id)">
+                    Guide
+                    <img src="{% static 'images/guide.png' %}" class="plinko-icon-size-home" alt="">
+                </button>
+            </div>
+
+            <div class="d-flex text-center mt-4">
+                <span class="text-white plinko-now-level-text">LV.<span id="now_level">1</span></span>
+                <div class="progress">
+                    <div class="progress-bar" style="width:20%; background:rgb(255, 210, 0);"></div>
+                </div>
+                <span class="text-white plinko-next-level-text">LV.<span id="next_level">2</span></span>
+            </div>
+
+            <div class="text-center font-weight-light plinko-point-text">
+                <div class="plinko-text-shadow">
+                    <div class="d-flex justify-content-center" style="height: 40px">
+                        <div id="point">
+                            0
+                        </div>
+                        <div>
+                            <img src="{% static 'images/logo-green.png' %}" class="plinko-logo-icon"
+                                 style="vertical-align: text-top">
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="earn_coin text-center">
+                <img id="click_to_coin" class="plinko-main-coin" src="{% static 'images/coin.png' %}">
+
+                <div class="d-flex text-center mt-4">
+                    <span class="text-white plinko-now-level-text" style="bottom: 9px">
+                        <img src="{% static 'images/energy.png' %}" style="width: 4vw">
+                        <span id="point_can_take">500</span>/
+                        <span id="pool_size">500</span>
+                    </span>
+                    <div class="progress plinko-bottom-bar">
+                        <div class="progress-bar"
+                             style="width:20%; background:#00ff00;box-shadow: 0 0 3px 1px #00ff00;"></div>
+                    </div>
+                    <span class="plinko-next-level-text plinko-bottom-bar-text">
+                        +<span id="point_per_tap">1</span>
+                        <img src="{% static 'images/logo-green.png' %}" style="width: 5vw">
+                    </span>
+                    <span class="plinko-next-level-text text-white plinko-ml-2">Profit Perhit</span>
+                </div>
+            </div>
+
+        </div>
+        <div style="width: 100%;height: 50px"></div>
+    </div>
+
+    <div id="improve" hidden>
+        <div class="container">
+            <div class="d-flex justify-content-center mt-4 mb-2">
+                <button type="button" class="btn btn-success btn-sm plinko-btn mx-1">level <span
+                        class="user_level">0</span></button>
+                <span class="text-secondary mx-1"> | </span>
+                <div class="p-p-h-box mx-2">
+                    <img src="{% static 'images/logo-green.png' %}" class="friends-icons" alt="">
+                    <span class="text-white">UNPG</span>
+                    <h6 class="text-white coin_count">0</h6>
+                </div>
+                <div class="p-p-h-box">
+                    <img src="{% static 'images/logo.png' %}" class="friends-icons">
+                    <span class="text-white">UNP</span>
+                    <h6 class="text-white">{{ my_user_info.unp_token|floatformat:0|intcomma }}</h6>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-center mt-3 mb-2">
+                <div class="invest-line">Improve</div>
+            </div>
+            <div class="d-flex justify-content-center">
+                <div class="improve-box-size flex-md-fill">
+
+                    {% for task in all_task %}
+                        {% if task.is_active %}
+                            <div class="d-flex justify-content-between p-1 my-2 text-white plinko-improve-box-item"
+                                 onclick="if (window.Telegram && window.Telegram.WebApp) {
+                                              window.Telegram.WebApp.openLink('{{ task.task_link }}');
+                                            }">
+                                <div class="part3 d-flex" style="text-align: left">
+                                    <div class="d-flex flex-column">
+                                        <div style="margin-left: 7px; margin-bottom: 2px;width: 120px;">
+                                            {% if task.social_name == 'YouTube' %}
+                                                <img src="{% static 'images/social/youtube.png' %}"
+                                                     class="social-icons">
+                                            {% elif task.social_name == 'Telegram' %}
+                                                <img src="{% static 'images/social/telegram.png' %}"
+                                                     class="social-icons">
+                                            {% elif task.social_name == 'Instagram' %}
+                                                <img src="{% static 'images/social/instagram.png' %}"
+                                                     class="social-icons">
+                                            {% elif task.social_name == 'Twitter' %}
+                                                <img src="{% static 'images/social/x.png' %}" class="social-icons">
+                                            {% endif %}
+
+                                            {{ task.social_name }}
+                                        </div>
+                                        {% if task.is_active %}
+                                            <button type="button" class="btn btn-success btn-sm improve-active mx-1"
+                                                    value="0">
+                                                ACTIVE
+                                            </button>
+                                        {% else %}
+                                            <button type="button" class="btn btn-sm improve-inactive mx-1"
+                                                    value="0">
+                                                INACTIVE
+                                            </button>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="part3 d-flex" style="text-align: right">
+                                    <div class="d-flex flex-column">
+                                        <div style="margin-right: 7px;font-weight: 700">
+                                            {{ task.prize_coin|floatformat:0|intcomma }}
+                                            <img src="{% static 'images/logo-green.png' %}" width="20px" height="20px">
+                                        </div>
+                                        <div class="plinko-inline-block mx-2"
+                                             style="font-size: 10px">{{ task.date.date|date:"Y-m-d" }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                    {% for task in all_task %}
+                        {% if not task.is_active %}
+                            <div class="d-flex justify-content-between p-1 my-2 text-white plinko-improve-box-item">
+                                <div class="part3 d-flex" style="text-align: left">
+                                    <div class="d-flex flex-column">
+                                        <div style="margin-left: 7px; margin-bottom: 2px;width: 120px">
+                                            {% if task.social_name == 'YouTube' %}
+                                                <img src="{% static 'images/social/youtube.png' %}"
+                                                     class="social-icons">
+                                            {% elif task.social_name == 'Telegram' %}
+                                                <img src="{% static 'images/social/telegram.png' %}"
+                                                     class="social-icons">
+                                            {% elif task.social_name == 'Instagram' %}
+                                                <img src="{% static 'images/social/instagram.png' %}"
+                                                     class="social-icons">
+                                            {% elif task.social_name == 'Twitter' %}
+                                                <img src="{% static 'images/social/x.png' %}" class="social-icons">
+                                            {% endif %}
+
+                                            {{ task.social_name }}
+                                        </div>
+                                        {% if task.is_active %}
+                                            <button type="button" class="btn btn-success btn-sm improve-active mx-1"
+                                                    value="0">
+                                                ACTIVE
+                                            </button>
+                                        {% else %}
+                                            <button type="button" class="btn btn-sm improve-inactive mx-1"
+                                                    value="0">
+                                                INACTIVE
+                                            </button>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="part3 d-flex" style="text-align: right">
+                                    <div class="d-flex flex-column">
+                                        <div style="margin-right: 7px; font-weight: 700">
+                                            {{ task.prize_coin|floatformat:0|intcomma }}
+                                            <img src="{% static 'images/logo-green.png' %}" width="20px" height="20px">
+                                        </div>
+                                        <div class="plinko-inline-block mx-2"
+                                             style="font-size: 10px">{{ task.date.date|date:"Y-m-d" }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="investment" hidden>
+        <div class="container">
+            <div class="d-flex justify-content-center mt-4 mb-2">
+                <button type="button" class="btn btn-success btn-sm plinko-btn mx-1">level <span
+                        class="user_level">0</span></button>
+                <span class="text-secondary mx-1"> | </span>
+                <div class="p-p-h-box mx-2">
+                    <img src="{% static 'images/logo-green.png' %}" class="friends-icons">
+                    <span class="text-white">UNPG</span>
+                    <h6 class="text-white coin_count">0</h6>
+                </div>
+                <div class="p-p-h-box">
+                    <img src="{% static 'images/logo.png' %}" class="friends-icons">
+                    <span class="text-white">UNP</span>
+                    <h6 class="text-white">{{ my_user_info.unp_token|floatformat:0|intcomma }}</h6>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-center mt-3 mb-2">
+                <div class="invest-line">Investment</div>
+            </div>
+            <div class="d-flex mt-3 justify-content-center">
+                <div class="invest-ticket" style="background-image: url('{% static 'images/invest-ticket.png' %}')">
+                    <div class="invest-part1">
+                        <img src="{% static 'images/investment.png' %}" class="invest-ticket-icon">
+                        <span class="invest-text" style="vertical-align: super">Investment</span>
+                    </div>
+                    <div class="invest-part2">
+                        <img src="{% static 'images/green-dolar.png' %}" width="25px" height="25px">
+                        <span>100</span>
+                    </div>
+                    <div class="invest-part3">
+                        <p>loremasf asf asfwdsfasdg gasdg aewg aewg weg ewg wef ew </p>
+                        <div style="text-align: right">
+                            <button type="button" class="btn btn-success btn-sm invest-buy-btn">Buy</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-center">
+                <div class="invest-box-size flex-md-fill">
+                    <div class="d-flex justify-content-between p-1 my-2 text-white plinko-players-box-item">
+                        <div class="players-list">
+                            <div class="plinko-inline-block invest-shape invest-arrow-green"
+                                 style="background-image: url('{% static 'images/invest.png' %}')"></div>
+                            <span class="friend-invite-text" style="vertical-align: super">Investment</span>
+                        </div>
+                        <div class="part3 d-flex">
+                            <div class="d-flex flex-column">
+                                <div class="plinko-inline-block mx-2">500</div>
+                            </div>
+                            <img src="{% static 'images/green-dolar.png' %}" width="25px" height="25px">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex justify-content-center">
+                <div class="invest-box-size flex-md-fill">
+                    <div class="invest-text text-left">Participation</div>
+                </div>
+            </div>
+
+
+            <div class="d-flex justify-content-center">
+                <div class="invest-box-size flex-md-fill">
+
+                    <div class="d-flex justify-content-between p-1 my-2 text-white plinko-players-box-item">
+                        <div class="players-list">
+                            <div class="plinko-inline-block invest-shape invest-arrow-gray"
+                                 style="background-image: url('{% static 'images/invest.png' %}')"></div>
+                            <span class="friend-invite-text" style="vertical-align: super">Investment</span>
+                        </div>
+                        <div class="part3 d-flex">
+                            <div class="d-flex flex-column">
+                                <div class="plinko-inline-block mx-2">999</div>
+                            </div>
+                            <img src="{% static 'images/gray-dolar.png' %}" width="25px" height="25px" alt="">
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between p-1 my-2 text-white plinko-players-box-item">
+                        <div class="players-list">
+                            <div class="plinko-inline-block invest-shape invest-arrow-gray"
+                                 style="background-image: url('{% static 'images/invest.png' %}')"></div>
+                            <span class="friend-invite-text" style="vertical-align: super">Investment</span>
+                        </div>
+                        <div class="part3 d-flex">
+                            <div class="d-flex flex-column">
+                                <div class="plinko-inline-block mx-2">999</div>
+                            </div>
+                            <img src="{% static 'images/gray-dolar.png' %}" width="25px" height="25px">
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="d-flex mt-3 justify-content-center">
+                <div class="invest-ticket" style="background-image: url('{% static 'images/invest-ticket.png' %}')">
+                    <div class="invest-part1">
+                        <img src="{% static 'images/invest-up.png' %}" class="invest-ticket-icon">
+                        <span class="invest-text" style="vertical-align: super">Investment</span>
+                    </div>
+                    <div class="invest-part2">
+                        <img src="{% static 'images/green-dolar.png' %}" width="25px" height="25px">
+                        <span>100</span>
+                    </div>
+                    <div class="invest-part3">
+                        <p>loremasf asf asfwdsfasdg gasdg aewg aewg weg ewg wef ew </p>
+                        <div style="text-align: right">
+                            <button type="button" class="btn btn-success btn-sm invest-buy-btn">Buy</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+
+        </div>
+
+    </div>
+
+    <div id="friends" hidden>
+        <div class="container">
+            <div class="d-flex justify-content-center mt-4 mb-2">
+                <button type="button" class="btn btn-success btn-sm plinko-btn mx-1">level <span
+                        class="user_level">0</span></button>
+                <span class="text-secondary mx-1"> | </span>
+                <div class="p-p-h-box mx-2">
+                    <img src="{% static 'images/logo-green.png' %}" class="friends-icons">
+                    <span class="text-white">UNPG</span>
+                    <h6 class="text-white coin_count">0</h6>
+                </div>
+                <div class="p-p-h-box">
+                    <img src="{% static 'images/logo.png' %}" class="friends-icons">
+                    <span class="text-white">UNP</span>
+                    <h6 class="text-white">{{ my_user_info.unp_token|floatformat:0|intcomma }}</h6>
+                </div>
+            </div>
+            <div class="d-flex justify-content-center mt-3 mb-2">
+                <h2 class="text-white">Referrals
+                    <div class="friends-shape" id="total_friends" style="width: 50px;height: 22px">22</div>
+                </h2>
+            </div>
+            <div>
+                <div class="d-flex justify-content-center">
+                    <div class="friends-upper-box flex-md-fill">
+                        <div class="p-1 text-white friends-box">
+                            <div class="friends-tot-lower">
+                                My invite Link:
+                                <div>{{ referral_link }}</div>
+                            </div>
+                            <div style="text-align: right">
+                                <button id="copy_ref_link_btn" type="button"
+                                        class="btn btn-warning btn-sm plinko-btn mx-1">Copy
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-center mt-3">
+                    <div class="friends-gift-box flex-md-fill">
+                        <div class="p-1 text-white friend-gift-box-item ">
+                            <img src="{% static 'images/red-gift.png' %}">
+                            <h5>+10,000</h5>
+                            <p>If your friends reach 10</p>
+                            <p>you will receive 10,000 points</p>
+                        </div>
+                    </div>
+                    <div class="friends-gift-box flex-md-fill mx-2">
+                        <div class="p-1 text-white friend-gift-box-item ">
+                            <img src="{% static 'images/purple-gift.png' %}">
+                            <h5>+20,000</h5>
+                            <p>If your friends reach 20</p>
+                            <p>you will receive 20,000 points</p>
+                        </div>
+                    </div>
+                    <div class="friends-gift-box flex-md-fill">
+                        <div class="p-1 text-white friend-gift-box-item ">
+                            <img src="{% static 'images/blue-gift.png' %}">
+
+                            <h5>+30,000</h5>
+                            <p>If your friends reach 30</p>
+                            <p>you will receive 30,000 points</p>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-center">
+                    <div class="friends-scroll-box flex-md-fill">
+
+                        <div class="d-flex justify-content-between p-1 my-2 text-white plinko-players-box-item">
+                            <div class="players-list">
+                                <span class="part1">#</span>
+                                <span class="part2 hide_long_name">{{ my_user_info.for_user.username }}</span>
+                            </div>
+                            <div class="part3 d-flex">
+                                <div class="d-flex flex-column friend-invite-text">
+                                    <div class="plinko-inline-block">My invite Friends</div>
+                                </div>
+                                <div class="plinko-inline-block plinko-shape you-shape-color"></div>
+                            </div>
+                        </div>
+                        {% for my_ref in my_referrals %}
+                            <div class="d-flex justify-content-between p-1 my-2 text-white plinko-players-box-item">
+                                <div class="players-list">
+                                    <span class="part1">#</span>
+                                    <span class="part2 hide_long_name">{{ my_ref.my_referral.for_user.username }}</span>
+                                </div>
+                                <div class="part3 d-flex">
+                                    <div class="d-flex flex-column">
+                                        <div class="plinko-inline-block score-text-players">Date</div>
+                                        <div class="plinko-inline-block rank-text-players">{{ my_ref.my_referral.for_user.date_joined.date|date:"Y-m-d" }}</div>
+                                    </div>
+
+                                    <img src="{% static 'images/invite.png' %}" class="friends-invite-icon" width="20px"
+                                         height="20px">
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+    <div id="players" hidden>
+        <div class="container">
+
+            <div class="d-flex justify-content-center mt-4 mb-2">
+                <button type="button" class="btn btn-warning btn-lg plinko-btn mx-1"
+                        onclick="show_page('home','')">
+                    Back
+                </button>
+                <button type="button" class="btn btn-warning btn-lg plinko-btn mx-1" style="width: 50%">
+                    Players
+                    <img src="{% static 'images/tas1.png' %}" class="plinko-icon-size-players" style="width: 25px">
+                </button>
+            </div>
+
+            <div class="text-center plinko-point-text mt-15">
+                <div class="inline">{{ total_coin_earned|floatformat:0|intcomma }} T</div>
+                <div class="plinko-small-text">Total Share Balance</div>
+            </div>
+
+            <div class="d-flex justify-content-center">
+                <div class="plinko-total-players-box flex-md-fill">
+                    <div class="p-1 my-2 text-white plinko-total-players-box-item">
+
+                        <div class="tot-upper">
+                            Total Players
+                        </div>
+
+                        <div class="tot-lower">
+                            {{ total_players|floatformat:0|intcomma }}
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-center">
+                <div class="plinko-scroll-earn flex-md-fill" style="height: 150px">
+                    {% for user in users %}
+                        {% if forloop.counter <= 10 %}
+                            <div class="d-flex justify-content-between p-1 my-2 text-white plinko-players-box-item">
+                                <div class="players-list">
+                                    <span class="part1">#{{ forloop.counter }}</span>
+                                    <span class="part2 hide_long_name">{{ user.for_user.username }}</span>
+                                </div>
+                                <div class="part3 d-flex">
+                                    <div class="d-flex flex-column">
+                                        <div class="plinko-inline-block score-text-players">Coins</div>
+                                        <div class="plinko-inline-block rank-text-players">{{ user.coin_count|floatformat:0|intcomma }}<span></span>
+                                        </div>
+                                    </div>
+
+                                    <div id="my_color_in_top"
+                                         class="plinko-inline-block plinko-shape first-shape-color"></div>
+                                </div>
+                            </div>
+                        {% endif %}
+
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-center">
+                <div class="flex-md-fill" style="width: 75%">
+                    <div class="plinko-small-text text-center">View More</div>
+
+                    <div class="d-flex justify-content-between p-1 my-2 text-white plinko-players-box-item">
+                        <div class="players-list">
+                            <span class="part1">#242</span>
+                            <span class="part2">You</span>
+                        </div>
+                        <div class="part3 d-flex">
+                            <div class="d-flex flex-column">
+                                <div class="plinko-inline-block score-text-players">Coins</div>
+                                <div class="plinko-inline-block rank-text-players"><span class="coin_count">0</span>
+                                </div>
+                            </div>
+                            <div class="plinko-inline-block plinko-shape you-shape-color"></div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="guide" hidden>
+        <div class="container">
+
+            <div class="d-flex justify-content-center mt-4">
+                <button type="button" class="btn btn-warning btn-lg plinko-btn mx-1"
+                        onclick="show_page('home','')">
+                    Back
+                </button>
+                <button type="button" class="btn btn-warning btn-lg plinko-btn mx-1" style="width: 50%;">
+                    Guide
+                    <img src="{% static 'images/guide.png' %}" class="plinko-icon-size-players" style="width: 25px">
+                </button>
+            </div>
+
+            <div class="d-flex justify-content-center">
+                <div class="plinko-guide-box flex-md-fill">
+                    <div id="education_btn" class="p-1 my-2 text-white plinko-guid-box-item">
+                        <img src="{% static 'images/educ.png' %}">
+                        <p>Education</p>
+                    </div>
+                </div>
+                <div id="documentation_btn" class="plinko-guide-box flex-md-fill">
+                    <div class="p-1 my-2 text-white plinko-guid-box-item">
+                        <img src="{% static 'images/docu.png' %}">
+                        <p style="margin-top: 6px">Documentation</p>
+                    </div>
+                </div>
+                <div id="about_us_btn" class="plinko-guide-box flex-md-fill">
+                    <div class="p-1 my-2 text-white plinko-guid-box-item">
+                        <img src="{% static 'images/about-us.png' %}">
+                        <p>About Us</p>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-center">
+                <div class="plinko-scroll-earn flex-md-fill">
+
+                    <div class="d-flex justify-content-between p-1 my-2 text-white plinko-players-box-item">
+                        <div class="players-list">
+                            <div class="plinko-inline-block plinko-shape-guide you-shape-color"></div>
+                            <span class="part2">Level 1</span>
+                        </div>
+                        <div class="part3 d-flex">
+                            <div class="d-flex flex-column">
+                                <div class="plinko-inline-block rank-text-players" style="margin-bottom: 0">0</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between p-1 my-2 text-white plinko-players-box-item">
+                        <div class="players-list">
+                            <div class="plinko-inline-block plinko-shape-guide first-shape-color"></div>
+                            <span class="part2">Level 2</span>
+                        </div>
+                        <div class="part3 d-flex">
+                            <div class="d-flex flex-column">
+                                <div class="plinko-inline-block rank-text-players" style="margin-bottom: 0">100,000
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between p-1 my-2 text-white plinko-players-box-item">
+                        <div class="players-list">
+                            <div class="plinko-inline-block plinko-shape-guide first-shape-color"></div>
+                            <span class="part2">Level 3</span>
+                        </div>
+                        <div class="part3 d-flex">
+                            <div class="d-flex flex-column">
+                                <div class="plinko-inline-block rank-text-players" style="margin-bottom: 0">200,000
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between p-1 my-2 text-white plinko-players-box-item">
+                        <div class="players-list">
+                            <div class="plinko-inline-block plinko-shape-guide first-shape-color"></div>
+                            <span class="part2">Level 4</span>
+                        </div>
+                        <div class="part3 d-flex">
+                            <div class="d-flex flex-column">
+                                <div class="plinko-inline-block rank-text-players" style="margin-bottom: 0">300,000
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between p-1 my-2 text-white plinko-players-box-item">
+                        <div class="players-list">
+                            <div class="plinko-inline-block plinko-shape-guide first-shape-color"></div>
+                            <span class="part2">Level 5</span>
+                        </div>
+                        <div class="part3 d-flex">
+                            <div class="d-flex flex-column">
+                                <div class="plinko-inline-block rank-text-players" style="margin-bottom: 0">400,000
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between p-1 my-2 text-white plinko-players-box-item">
+                        <div class="players-list">
+                            <div class="plinko-inline-block plinko-shape-guide first-shape-color"></div>
+                            <span class="part2">Level 6</span>
+                        </div>
+                        <div class="part3 d-flex">
+                            <div class="d-flex flex-column">
+                                <div class="plinko-inline-block rank-text-players" style="margin-bottom: 0">500,000
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between p-1 my-2 text-white plinko-players-box-item">
+                        <div class="players-list">
+                            <div class="plinko-inline-block plinko-shape-guide first-shape-color"></div>
+                            <span class="part2">Level 7</span>
+                        </div>
+                        <div class="part3 d-flex">
+                            <div class="d-flex flex-column">
+                                <div class="plinko-inline-block rank-text-players" style="margin-bottom: 0">600,000
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between p-1 my-2 text-white plinko-players-box-item">
+                        <div class="players-list">
+                            <div class="plinko-inline-block plinko-shape-guide first-shape-color"></div>
+                            <span class="part2">Level 8</span>
+                        </div>
+                        <div class="part3 d-flex">
+                            <div class="d-flex flex-column">
+                                <div class="plinko-inline-block rank-text-players" style="margin-bottom: 0">700,000
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between p-1 my-2 text-white plinko-players-box-item">
+                        <div class="players-list">
+                            <div class="plinko-inline-block plinko-shape-guide first-shape-color"></div>
+                            <span class="part2">Level 9</span>
+                        </div>
+                        <div class="part3 d-flex">
+                            <div class="d-flex flex-column">
+                                <div class="plinko-inline-block rank-text-players" style="margin-bottom: 0">800,000
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between p-1 my-2 text-white plinko-players-box-item">
+                        <div class="players-list">
+                            <div class="plinko-inline-block plinko-shape-guide first-shape-color"></div>
+                            <span class="part2">Level 10</span>
+                        </div>
+                        <div class="part3 d-flex">
+                            <div class="d-flex flex-column">
+                                <div class="plinko-inline-block rank-text-players" style="margin-bottom: 0">900,000
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="education" hidden>
+        <div class="container">
+            <div class="d-flex justify-content-center mt-4 mb-2">
+                <button type="button" class="btn btn-warning btn-lg plinko-btn mx-1"
+                        onclick="show_page('guide','')">
+                    Back
+                </button>
+                |
+                <button type="button" class="btn btn-warning btn-lg plinko-btn mx-1" style="width: 50%">
+                    Education
+                </button>
+            </div>
+            <div class="text-center mt-5">
+                <div class="inline long-text-style ">
+                    Pioneering Seamless Web3 Integration for Game Studios in the Blockchain Era
+                    Unipoly Publisher is a structure that facilitates the web3 integration of web2- based game studios,
+                    enabling them to reach broader audiences with their games. Through blockchain integration, it
+                    provides the opportunity for innovative revenue models to leverage the advantages of the web3 world.
+                    <br>
+                    <br>
+                    As a future-thinking company, Unipoly is committed to publishing quality games that integrate
+                    seamlessly with blockchain, and provides studios with easy, fast and flexible solutions when
+                    publishing games, making it easier for them to reach large audiences.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="documentation" hidden>
+        <div class="container">
+            <div class="d-flex justify-content-center mt-4 mb-2">
+                <button type="button" class="btn btn-warning btn-lg plinko-btn mx-1"
+                        onclick="show_page('guide','')">
+                    Back
+                </button>
+                |
+                <button type="button" class="btn btn-warning btn-lg plinko-btn mx-1" style="width: 50%">
+                    Documentation
+                </button>
+            </div>
+            <div class="text-center mt-5">
+                <div class="inline long-text-style ">
+                    ELEVATE YOUR GAME, TRANSFORMING VISIONS INTO REALITIES
+                    <br>
+                    <br>
+                    Unipoly Services is a service where game studios can find all their end-to-end needs on a single
+                    platform. They will be able to use everything necessary to develop their games both web2 and web3
+                    based.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="about_us" hidden>
+        <div class="container">
+            <div class="d-flex justify-content-center mt-4 mb-2">
+                <button type="button" class="btn btn-warning btn-lg plinko-btn mx-1"
+                        onclick="show_page('guide','')">
+                    Back
+                </button>
+                |
+                <button type="button" class="btn btn-warning btn-lg plinko-btn mx-1" style="width: 50%">
+                    About Us
+                </button>
+            </div>
+            <div class="text-center mt-5">
+                <div class="inline long-text-style ">
+                    Who We Are?
+                    <br>
+                    <br>
+                    At Unipoly, we stand as trailblazers at the forefront of gaming evolution, seamlessly bridging the
+                    realms of Web2 and Web3 gaming ecosystems. As a dynamic publisher and game studio, our passionate
+                    and creative team is committed to delivering unparalleled experiences to players worldwide.
+                    Unipoly is more than a gaming entity; it's a commitment to pushing the boundaries of the industry.
+                    With a focus on Web3 gaming, we actively shape the future of interactive entertainment. Our
+                    dedication to innovation is exemplified by our successful titles, including Raidfield2, which has
+                    garnered acclaim from over 2 million players.
+                    <br>
+                    <br>
+                    Unipoly goes beyond borders, introducing local talents to a global audience. Through our
+                    revolutionary Unipoly Coin blockchain infrastructure, we empower developers to showcase their
+                    creations worldwide, fostering a truly interconnected and borderless gaming community.
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block footer %}
+    <div id="footer_load" hidden>
+        <div class="plinko-footer">
+            <header class="justify-content-center">
+                <ul class="nav justify-content-center plinko-text-footer">
+                    <li class="nav-item">
+                        <a href="#" id="home_btn" class="nav-link active text-center" aria-current="page"
+                           onclick="show_page('home','home_btn')">
+                            <div class="text-center">
+                                <img class="plinko-footer-icons" src="{% static 'images/earn.png' %}">
+                            </div>
+                            <span class="plinko-text-footer-size">Earn</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" id="improve_btn" class="nav-link text-center" aria-current="page"
+                           onclick="show_page('improve','improve_btn')">
+                            <div class="text-center">
+                                <img class="plinko-footer-icons" src="{% static 'images/improve.png' %}">
+                            </div>
+                            <span class="plinko-text-footer-size">Improve</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" id="investment_btn" class="nav-link text-center" aria-current="page"
+                           onclick="show_page('investment','investment_btn')">
+                            <div class="text-center">
+                                <img class="plinko-footer-icons" src="{% static 'images/investment.png' %}">
+                            </div>
+                            <span class="plinko-text-footer-size">Investment</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" id="friend_btn" class="nav-link text-center" aria-current="page"
+                           onclick="show_page('friends','friend_btn')">
+                            <div class="text-center">
+                                <img class="plinko-footer-icons" src="{% static 'images/friends.png' %}">
+                            </div>
+                            <span class="plinko-text-footer-size">Friends</span>
+                        </a>
+                    </li>
+                </ul>
+            </header>
+        </div>
+    </div>
+    {{ referral_link|json_script:"ref_link" }}
+{% endblock %}
+
+{% block footer_ref %}
+    <script src="{% static 'js/home.js' %}"></script>
+{% endblock %}

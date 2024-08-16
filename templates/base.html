@@ -1,0 +1,32 @@
+{% load static %}
+{% load render_partial %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>UNIPLOY</title>
+    {% include 'header_ref.html' %}
+</head>
+<body>
+<img src="{% static 'images/bg.png' %}" class="plinko-bg-img">
+{% block header_ref %}{% endblock %} {# برای تعریف ref های برای صفحات مختلف #}
+
+{% block content %}
+
+{% endblock %}
+
+{% block footer %}
+
+{% endblock %}
+
+
+{% block footer_ref %}{% endblock %} {# برای تعریف js های برای صفحات مختلف #}
+{% include 'footer_ref.html' %}
+
+</body>
+
+</html>
