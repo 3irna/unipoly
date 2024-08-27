@@ -27,6 +27,4 @@ def validate_init_data(init_data, bot_token=bot_token):
 
 # Example usage
 init_data = "query_id=AAELH541AAAAAAsfnjVlxViY&user=%7B%22id%22%3A899555083%2C%22first_name%22%3A%22anrays%22%2C%22last_name%22%3A%22%22%2C%22username%22%3A%22anrays4%22%2C%22language_code%22%3A%22en%22%2C%22allows_write_to_pm%22%3Atrue%7D&auth_date=1723286649&hash=50d84987363aa225f598d5d27cf96d5ceedb2f0531bf374fc402b93a7e033729"
-a, b = validate_init_data(init_data)
-print(b)
-print(b['id'])
+print(validate_init_data(init_data))

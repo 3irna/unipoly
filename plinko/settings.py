@@ -11,7 +11,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-!d^z_j!k^u@zc5&k&ctuwd2+%x1n#!(0+66#p4y((u=5s$f3*h'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["*"]
 
@@ -43,6 +43,17 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'plinko.urls'
 
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ]
+}
+
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -65,10 +76,20 @@ WSGI_APPLICATION = 'plinko.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'anrays4$default',
+        'USER': 'anrays4',
+        'PASSWORD': 'Arya_13811218',
+        'HOST': 'anrays4.mysql.pythonanywhere-services.com',
     }
 }
 
@@ -124,8 +145,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # test
 # TELEGRAM_BOT_TOKEN = "7360480463:AAH363t7xDipRrhm1DIQnZo3OXWhmv2ytbA"
 # TELEGRAM_BOT_ID = 'TestMiniArya_bot'
+# MINI_APP_URL = 'http://127.0.0.1:8001'  # ex : http://127.0.0.1:8001
 
 # real
 TELEGRAM_BOT_TOKEN = "7240774092:AAG9Tn3z12ZS0SdeNOZdtSTAmX4zBtmJXH4"
 TELEGRAM_BOT_ID = 'UnipolygamesBot'
-
+MINI_APP_URL = 'https://anrays4.pythonanywhere.com/'  # ex : http://127.0.0.1:8001
